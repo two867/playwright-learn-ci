@@ -1,0 +1,47 @@
+# .github/workflows/nightly-tests.yml
+name: 每晚定时全量 UI 测试
+
+on:
+  schedule:
+    # 国际标准时间（UTC）18:00，对应的北京时间是凌晨 02:00
+    - cron: '0 18 * * *'
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # ✨ 核心步骤 1：利用官方 Action 自动安装 uv
+    # 它会自动下载最新版 uv，并配置好环境变量，同时默认开启了极速缓存功能
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        # 可选：指定你想要的 uv 版本，不写默认最新
+        version: "latest"
+        # 自动帮你开启缓存，下次运行流水线如果依赖没变，可以秒级完成
+        enable-cache: true
+
+    # ✨ 核心步骤 3：使用 uv 创建虚拟环境并同步依赖
+    # uv sync 会自动读取你的 pyproject.toml / uv.lock 
+    - name: Install python and dependencies
+      run: uv sync -p 3.12
+
+    # -------------------------------------------------------------
+    # 以下是针对 Playwright UI 测试的特有步骤
+    # -------------------------------------------------------------
+    
+    # 步骤 4：安装 Playwright 运行所需的 Linux 系统底层依赖
+    # 使用 `uv run` 可以在 uv 虚拟环境中安全地执行命令
+    - name: Install Playwright system dependencies
+      run: uv run playwright install-deps
+
+    # 步骤 5：下载 Playwright 的浏览器二进制文件 (Chromium, Firefox 等)
+    - name: Install Playwright Browsers
+      run: uv run playwright install
+
+    # 步骤 6：使用 uv 执行 pytest 测试
+    - name: Run Tests
+      run: uv run pytest
