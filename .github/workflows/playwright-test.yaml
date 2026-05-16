@@ -14,7 +14,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v6
 
-    # ✨ 核心步骤 1：利用官方 Action 自动安装 uv
+    # ✨ 核心步骤：利用官方 Action 自动安装 uv
     # 它会自动下载最新版 uv，并配置好环境变量，同时默认开启了极速缓存功能
     - name: Set up uv
       uses: astral-sh/setup-uv@v8.1.0
@@ -24,7 +24,7 @@ jobs:
         # 自动帮你开启缓存，下次运行流水线如果依赖没变，可以秒级完成
         enable-cache: true
 
-    # ✨ 核心步骤 3：使用 uv 创建虚拟环境并同步依赖
+    # ✨ 核心步骤：使用 uv 创建虚拟环境并同步依赖
     # uv sync 会自动读取你的 pyproject.toml / uv.lock 
     - name: Install python and dependencies
       run: uv sync -p 3.12
@@ -33,15 +33,25 @@ jobs:
     # 以下是针对 Playwright UI 测试的特有步骤
     # -------------------------------------------------------------
     
-    # 步骤 4：安装 Playwright 运行所需的 Linux 系统底层依赖
+    # 安装 Playwright 运行所需的 Linux 系统底层依赖
     # 使用 `uv run` 可以在 uv 虚拟环境中安全地执行命令
     - name: Install Playwright system dependencies
       run: uv run playwright install-deps
 
-    # 步骤 5：下载 Playwright 的浏览器二进制文件 (Chromium, Firefox 等)
+    # 下载 Playwright 的浏览器二进制文件 (Chromium, Firefox 等)
     - name: Install Playwright Browsers
       run: uv run playwright install
 
-    # 步骤 6：使用 uv 执行 pytest 测试
+    # 使用 uv 执行 pytest 测试
     - name: Run Tests
       run: uv run pytest
+
+    # ✨ 上传 output 目录为 Artifact，方便下载查看测试产物（报告、截图等）
+    # always() 确保即使测试失败也会上传，这样你能看到失败时的截图/日志
+    - name: Upload test output
+      uses: actions/upload-artifact@v4
+      if: ${{ always() }}
+      with:
+        name: test-output
+        path: output/
+        retention-days: 7
