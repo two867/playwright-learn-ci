@@ -1,0 +1,7 @@
+[project]
+name = "playwright-learn-ci"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "pytest-playwright>=0.7.2",
+]

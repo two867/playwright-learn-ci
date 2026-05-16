@@ -1,0 +1,16 @@
+# generate by pycharm
+.idea
+__pycache__
+*.pytest_cache
+*__pycache__
+.venv
+.vscode
+
+# code related
+config/settings.py
+.auth
+output
+outputs
+.env*
+!.env.example
+.cache
