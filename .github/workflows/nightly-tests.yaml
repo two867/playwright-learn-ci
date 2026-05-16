@@ -17,7 +17,7 @@ jobs:
     # ✨ 核心步骤 1：利用官方 Action 自动安装 uv
     # 它会自动下载最新版 uv，并配置好环境变量，同时默认开启了极速缓存功能
     - name: Set up uv
-      uses: astral-sh/setup-uv@v8
+      uses: astral-sh/setup-uv@v8.1.0
       with:
         # 可选：指定你想要的 uv 版本，不写默认最新
         version: "latest"
