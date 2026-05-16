@@ -16,4 +16,4 @@ def test_baidu_01(page: Page):
     expect(page).to_have_title("百度一下，你就知道")
 
 
-
+# allure 分支xxx
