@@ -17,7 +17,7 @@ jobs:
     steps:
     # 步骤 1：拉取仓库代码
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     # 步骤 2：打印一句欢迎语
     - name: Run a one-line script
